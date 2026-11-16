@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>מערכת הנדל״ן | מצגת משקיעים</title>
+<meta name="description" content="מפנייה ראשונה להזדמנות הבאה: מערכת לניהול לידים, התאמת פרויקטי נדל״ן ותקשורת מתמשכת עם לקוחות.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg:#0A0E14;
+    --bg-soft:#0C1119;
+    --card:#121821;
+    --card2:#1A222E;
+    --stroke:#242E3C;
+    --stroke-lt:#2E3A4A;
+    --cyan:#22D3EE;
+    --cyan-dim:#0E7C8C;
+    --cyan-deep:#0a3d47;
+    --green:#34D399;
+    --green-deep:#1F7A5A;
+    --text:#E8EDF4;
+    --text-mid:#9AA7B8;
+    --text-dim:#5C6878;
+    --font:'Heebo',system-ui,sans-serif;
+    --mono:'Space Mono','Heebo',monospace;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font);
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden;
+  }
+  #root{height:100%;}
+
+  .deck{
+    height:100dvh;
+    height:100vh;
+    overflow-y:scroll;
+    scroll-snap-type:y mandatory;
+    scroll-behavior:smooth;
+    scrollbar-width:none;
+  }
+  .deck::-webkit-scrollbar{display:none;}
+
+  .slide{
+    min-height:100dvh;
+    min-height:100vh;
+    scroll-snap-align:start;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:clamp(1.25rem,4.5vw,3.5rem);
+    position:relative;
+    overflow:hidden;
+  }
+  .slide-inner{width:100%;max-width:1080px;margin:0 auto;}
+
+  .anim{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1);}
+  .in-view .anim{opacity:1;transform:none;}
+  .in-view .anim.d1{transition-delay:.06s}
+  .in-view .anim.d2{transition-delay:.14s}
+  .in-view .anim.d3{transition-delay:.22s}
+  .in-view .anim.d4{transition-delay:.30s}
+  .in-view .anim.d5{transition-delay:.38s}
+  .in-view .anim.d6{transition-delay:.46s}
+  @media (prefers-reduced-motion:reduce){
+    .anim{opacity:1;transform:none;transition:none;}
+  }
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:clamp(.62rem,1.6vw,.72rem);
+    letter-spacing:.28em;
+    color:var(--cyan);
+    direction:ltr;
+    text-align:left;
+    display:inline-block;
+    margin-bottom:.7rem;
+  }
+  .mono{font-family:var(--mono);direction:ltr;display:inline-block;}
+  .title{
+    font-weight:900;
+    font-size:clamp(1.9rem,6.4vw,3rem);
+    line-height:1.05;
+    letter-spacing:-.01em;
+  }
+  .subtitle{
+    color:var(--text-mid);
+    font-size:clamp(.95rem,2.6vw,1.18rem);
+    font-weight:400;
+    line-height:1.5;
+    margin-top:.85rem;
+  }
+  .muted{color:var(--text-mid);}
+  .dim{color:var(--text-dim);}
+  .cyan{color:var(--cyan);}
+  .green{color:var(--green);}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--stroke);
+    border-radius:16px;
+    padding:clamp(1rem,2.6vw,1.4rem);
+    position:relative;
+    transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+  }
+  @media(hover:hover){
+    .card:hover{transform:translateY(-4px);border-color:var(--stroke-lt);box-shadow:0 14px 40px rgba(0,0,0,.35);}
+  }
+  .card.hot{
+    background:var(--card2);
+    border-color:var(--cyan-dim);
+    box-shadow:0 0 38px rgba(34,211,238,.13);
+  }
+  .icon-tile{
+    width:46px;height:46px;border-radius:11px;
+    background:var(--card2);border:1px solid var(--cyan-dim);
+    display:flex;align-items:center;justify-content:center;
+    flex:0 0 auto;
+  }
+  .icon-tile.green{border-color:var(--green);}
+  .icon-tile svg{width:22px;height:22px;}
+
+  .grid{display:grid;gap:clamp(.7rem,1.8vw,1rem);}
+  .g-2{grid-template-columns:repeat(2,1fr);}
+  .g-3{grid-template-columns:repeat(3,1fr);}
+  .pillars{grid-template-columns:repeat(5,1fr);}
+  .pipeline{grid-template-columns:repeat(4,1fr);}
+  @media(max-width:820px){
+    .g-2{grid-template-columns:1fr;}
+    .g-3{grid-template-columns:1fr;}
+    .pillars{grid-template-columns:repeat(3,1fr);}
+    .pipeline{grid-template-columns:repeat(2,1fr);}
+  }
+  @media(max-width:430px){
+    .pillars{grid-template-columns:repeat(2,1fr);}
+  }
+
+  .split-2{display:grid;gap:clamp(.7rem,1.8vw,1rem);}
+  .split-platform{grid-template-columns:1.05fr .95fr;}
+  .split-revenue{grid-template-columns:1.4fr 1fr;}
+  @media(max-width:820px){
+    .split-platform,.split-revenue{grid-template-columns:1fr;}
+  }
+
+  .rail{
+    position:fixed;
+    top:50%;right:clamp(.55rem,2vw,1.2rem);
+    transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:9px;
+    z-index:50;
+  }
+  .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--stroke-lt);
+    border:none;cursor:pointer;padding:0;
+    transition:all .3s ease;
+  }
+  .dot.active{background:var(--cyan);height:22px;border-radius:5px;box-shadow:0 0 12px rgba(34,211,238,.5);}
+  @media(max-width:600px){.dot{width:6px;height:6px;}.dot.active{height:16px;}}
+
+  .counter{
+    position:fixed;bottom:clamp(.8rem,2.5vw,1.4rem);left:clamp(.9rem,3vw,1.5rem);
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;
+    color:var(--text-dim);direction:ltr;z-index:50;
+  }
+
+  .glow{position:absolute;border-radius:50%;filter:blur(10px);pointer-events:none;}
+
+  .bar-row{display:flex;align-items:center;gap:.7rem;margin-bottom:clamp(.6rem,1.7vw,.95rem);}
+  .bar-label{flex:0 0 auto;width:clamp(110px,30%,190px);text-align:left;font-size:clamp(.72rem,1.8vw,.86rem);color:var(--text-mid);direction:rtl;}
+  .bar-track{flex:1;height:clamp(20px,4.4vw,26px);background:var(--bg-soft);border-radius:6px;position:relative;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:6px;width:0;transition:width 1s cubic-bezier(.2,.7,.3,1);}
+  .in-view .bar-fill{width:var(--w);}
+  .bar-val{flex:0 0 auto;font-family:var(--mono);font-size:clamp(.7rem,1.7vw,.82rem);color:var(--text);direction:ltr;min-width:58px;}
+
+  .chips{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+  @media(max-width:430px){.chips{grid-template-columns:repeat(2,1fr);}}
+  .chip{
+    background:var(--card2);border:1px solid var(--stroke);
+    border-radius:8px;padding:.5rem .4rem;text-align:center;
+    font-size:clamp(.68rem,1.7vw,.8rem);color:var(--text-mid);
+  }
+
+  .node{
+    width:clamp(44px,9vw,56px);height:clamp(40px,8vw,50px);
+    border-radius:10px;background:var(--card2);border:1px solid var(--stroke-lt);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-weight:700;color:var(--cyan);
+    font-size:clamp(.9rem,2.4vw,1.1rem);margin-bottom:.7rem;
+  }
+  .node.hot{background:var(--cyan);color:var(--bg);border-color:var(--cyan);box-shadow:0 0 26px rgba(34,211,238,.45);}
+
+  .dash-item{display:flex;gap:.55rem;align-items:flex-start;margin-bottom:.7rem;font-size:clamp(.82rem,2vw,.95rem);color:var(--text-mid);line-height:1.35;}
+  .dash{color:var(--accent,var(--cyan));font-family:var(--mono);flex:0 0 auto;line-height:1.35;}
+
+  .hint{
+    position:absolute;bottom:clamp(1.1rem,4vw,2rem);left:50%;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:.4rem;
+    color:var(--text-dim);font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;
+    animation:bob 2.2s ease-in-out infinite;
+  }
+  @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,7px)}}
+
+  .footer-bar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-top:1rem;border-top:1px solid var(--stroke);flex-wrap:wrap;}
+  .next-row{display:flex;gap:1rem;align-items:flex-start;margin-bottom:clamp(.7rem,2vw,1rem);}
+  .next-num{
+    width:clamp(38px,8vw,46px);height:clamp(38px,8vw,46px);border-radius:10px;flex:0 0 auto;
+    background:var(--card2);border:1px solid var(--cyan-dim);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-weight:700;color:var(--cyan);font-size:clamp(.95rem,2.4vw,1.1rem);
+  }
+
+  .price-hero{
+    text-align:center;
+    padding:clamp(1.4rem,4vw,2.2rem) 1rem;
+    background:var(--card2);
+    border:1px solid var(--cyan-dim);
+    border-radius:18px;
+    box-shadow:0 0 44px rgba(34,211,238,.12);
+  }
+  .price-num{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:clamp(2.2rem,8vw,3.6rem);
+    color:var(--cyan);
+    direction:ltr;
+    line-height:1;
+  }
+
+
+</style><style>
+:root{--text-dim:#8090a4}body{overflow:hidden}.deck{height:100dvh;scroll-snap-type:y proximity}.slide{min-height:100dvh;padding:100px 64px 82px;overflow:visible}.slide-inner{max-width:1120px}.title{font-size:clamp(2rem,4.5vw,3.8rem);line-height:1.13;letter-spacing:-.035em}.subtitle{font-size:clamp(1rem,1.6vw,1.17rem);line-height:1.7}.narrow{max-width:800px}.eyebrow{font-size:.69rem;letter-spacing:.18em;margin-bottom:20px}.margin{margin-top:30px}.topbar{position:fixed;top:0;left:0;right:0;height:65px;padding:0 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,14,20,.92);border-bottom:1px solid var(--stroke);z-index:70;backdrop-filter:blur(16px);gap:16px}.brand{direction:ltr;text-decoration:none;color:var(--text);font:10px var(--mono);letter-spacing:.08em;display:flex;align-items:center;gap:12px}.brand-mark{border:1px solid var(--cyan-dim);color:var(--cyan);padding:7px;font-size:13px;border-radius:5px}.topbar button,.secondary{font:500 13px var(--font);border:1px solid var(--stroke-lt);color:var(--text-mid);padding:8px 14px;background:var(--card);border-radius:8px;cursor:pointer}.topbar button span{margin-right:12px}button:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offset:5px}button:hover{filter:brightness(1.2)}#contents{position:fixed;left:24px;top:72px;z-index:80;background:var(--card);border:1px solid var(--stroke-lt);padding:12px;border-radius:12px;max-height:calc(100dvh - 110px);overflow:auto;width:290px;box-shadow:0 20px 70px #0009}#contents button{display:block;width:100%;text-align:right;background:transparent;border:0;color:var(--text);font:14px var(--font);padding:8px 12px;border-radius:5px;cursor:pointer}#contents button:hover{background:var(--card2)}#contents span{font:11px var(--mono);color:var(--cyan);margin-left:12px}.cover-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:45px;align-items:center}.cover .title{font-size:clamp(2.5rem,4.6vw,4.2rem)}.cover .subtitle{max-width:600px}.small-label{display:flex;align-items:center;gap:8px;color:var(--text-mid);font-size:13px;margin-bottom:20px}.status-light{width:6px;height:6px;background:var(--green);border-radius:50%;box-shadow:0 0 12px var(--green)}.cover-tags{display:flex;gap:10px;direction:ltr;justify-content:flex-end;margin:24px 0}.cover-tags span{font:10px var(--mono);color:var(--text-mid);padding:7px 10px;border:1px solid var(--stroke);border-radius:5px}.primary{background:var(--cyan);color:var(--bg);border:none;border-radius:7px;padding:12px 20px;cursor:pointer;font:700 14px var(--font);display:inline-flex;align-items:center;gap:24px}.cover-visual{border:1px solid var(--stroke-lt);background:radial-gradient(ellipse at 50% 50%,#0b3842 0,transparent 70%),var(--bg-soft);border-radius:18px;min-height:360px;padding:20px;position:relative;box-shadow:0 0 80px #0e7c8c14}.visual-header,.visual-footer{display:flex;justify-content:space-between;align-items:center;font-size:11px}.visual-header .mono{font-size:9px;letter-spacing:.06em}.badge{font-size:10px;color:var(--text-mid);border:1px solid var(--stroke-lt);padding:3px 7px;border-radius:4px;white-space:nowrap}.orbit{position:relative;height:275px;display:flex;align-items:center;justify-content:center}.orbit:before,.orbit:after{content:"";position:absolute;border:1px solid #22d3ee28;width:240px;height:240px;border-radius:50%}.orbit:after{width:170px;height:170px;border-style:dashed}.orbit-core{position:relative;z-index:1;border:1px solid var(--cyan-dim);width:108px;height:108px;background:#10232e;border-radius:24px;display:flex;align-items:center;justify-content:center;flex-direction:column;box-shadow:0 0 50px #22d3ee20}.orbit-core .mono{font-size:32px;color:var(--cyan)}.orbit-core small{font-size:11px;color:var(--text-mid)}.orbit-tag{position:absolute;border:1px solid var(--stroke-lt);border-radius:7px;background:var(--card);padding:7px 10px;z-index:2;font-size:12px}.tag-one{top:28px;right:0}.tag-two{left:0;top:132px}.tag-three{bottom:0;right:14px}.visual-footer{justify-content:center;gap:7px;color:var(--text-mid);margin-top:12px}.visual-footer i{width:5px;height:5px;background:var(--green);border-radius:50%}.cover-footer{margin-top:35px;font-size:12px}.cover-footer .mono{font-size:10px}.footnote{color:var(--text-dim);font-size:11px;line-height:1.6;margin-top:20px}.four{grid-template-columns:repeat(4,1fr)}.number{display:block;font:11px var(--mono);color:var(--cyan);margin-bottom:18px;direction:ltr;text-align:right;letter-spacing:.08em}.card h3,h3{font-size:19px;font-weight:700;line-height:1.4}.card p{color:var(--text-mid);font-size:15px;line-height:1.65;margin-top:8px}.card{padding:24px}.statement{padding-top:25px;border-top:1px solid var(--stroke);margin-top:30px;font-size:clamp(1.1rem,2vw,1.5rem);line-height:1.6}.system-grid{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:18px}.module-strip{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}.module-strip span{padding:8px 15px;font-size:13px;border:1px solid var(--stroke);border-radius:6px;color:var(--text-mid)}.split{display:grid;grid-template-columns:1fr 1fr;gap:42px;align-items:center}.split .subtitle{margin-top:0}.text-list{margin-top:20px}.text-list>div{padding:13px 0;border-bottom:1px solid var(--stroke)}.text-list>div:last-child{border:0}.text-list b{font-size:16px}.text-list p{font-size:14px;color:var(--text-mid);line-height:1.6;margin-top:4px}.mock-window{background:var(--card);border:1px solid var(--stroke-lt);border-radius:14px;overflow:hidden;box-shadow:0 20px 50px #0002}.window-bar{padding:15px 18px;border-bottom:1px solid var(--stroke);display:flex;align-items:center;justify-content:space-between;gap:8px}.window-bar b{font-size:13px}.channel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:18px;direction:ltr}.channel-grid span{text-align:center;padding:9px 3px;border:1px solid var(--stroke-lt);border-radius:6px;font-size:11px;color:var(--cyan)}.lead-row{margin:0 18px;padding:16px 0;display:flex;align-items:center;gap:10px;border-top:1px solid var(--stroke)}.lead-row b{font-size:12px}.lead-row small{display:block;color:var(--text-mid);font-size:11px;margin-top:5px}.avatar{width:33px;height:33px;background:var(--card2);border:1px solid var(--stroke-lt);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--cyan)}.tag{margin-right:auto;color:var(--cyan);font-size:10px;background:#22d3ee12;padding:4px 6px;border-radius:4px}.green-tag{color:var(--green);background:#34d39912}.mock-bottom{background:var(--bg-soft);padding:13px 18px;color:var(--text-mid);font-size:11px;line-height:1.6}.profile{display:flex;align-items:center;gap:14px;padding:22px}.profile h3{font-size:17px}.profile .muted{font-size:11px}.large{width:46px;height:46px;font-size:22px}.profile-fields{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:0 22px 20px}.profile-fields small{display:block;color:var(--text-mid);font-size:11px;margin-bottom:5px}.profile-fields b{font-size:13px}.timeline{padding:18px 22px;border-top:1px solid var(--stroke)}.timeline>div{display:flex;gap:10px;align-items:center;margin:12px 0;font-size:12px}.timeline i{width:6px;height:6px;background:var(--cyan-dim);border-radius:50%;flex-shrink:0}.project-art{height:140px;margin:18px 18px 12px;position:relative;overflow:hidden;background:linear-gradient(150deg,#092b34,#121821);border-radius:8px}.project-art>span{position:absolute;top:14px;left:14px;font-size:9px;color:var(--cyan);z-index:2}.buildings{display:flex;gap:9px;align-items:flex-end;height:100%;padding:20px 35px 0;direction:ltr}.buildings i{width:23%;height:55%;border:1px solid #22d3ee55;background:repeating-linear-gradient(0deg,transparent 0 11px,#22d3ee20 12px 13px),linear-gradient(90deg,#0e3643,#10222f)}.buildings i:nth-child(2){height:90%;width:19%}.buildings i:nth-child(3){height:72%;width:29%}.buildings i:nth-child(4){height:45%}.match-demo>h3{padding:5px 18px 12px;font-size:17px}.match-line{padding:8px 18px;font-size:13px;color:var(--text-mid)}.match-line span{color:var(--green);margin-left:10px}.match-line.pending span{color:#e8bd7f}.match-demo .mock-bottom{margin-top:12px}blockquote{border-right:2px solid var(--cyan);padding:12px 24px;font-size:22px;line-height:1.6;margin-top:28px}blockquote small{display:block;color:var(--text-dim);font-size:11px;margin-top:8px}.language-tabs{display:flex;gap:6px;padding:16px;flex-wrap:wrap}.language-tabs button{background:var(--card2);border:1px solid var(--stroke-lt);border-radius:6px;padding:6px 11px;color:var(--text-mid);font:12px var(--font);cursor:pointer}.language-tabs button[aria-pressed=true]{border-color:var(--cyan-dim);background:#0a3d47;color:var(--cyan)}.chat-area{padding:18px;min-height:245px;display:flex;flex-direction:column;gap:18px}.bubble{padding:16px;border:1px solid var(--stroke-lt);border-radius:12px;max-width:88%;font-size:14px;line-height:1.7}.incoming{background:var(--card2);align-self:flex-start}.outgoing{background:#0b333d;border-color:#0e7c8c80;align-self:flex-end}ul{padding-right:19px;color:var(--text-mid);font-size:14px;line-height:2;margin-top:18px}.journey{display:grid;grid-template-columns:1fr 1fr;gap:25px 40px}.journey article{display:flex;gap:18px;align-items:flex-start;padding-bottom:20px;border-bottom:1px solid var(--stroke)}.journey article>span{font:17px var(--mono);color:var(--cyan);padding:10px;background:var(--card2);border:1px solid var(--cyan-deep);border-radius:8px}.journey h3{font-size:19px}.journey p{font-size:14px;line-height:1.6;color:var(--text-mid);margin-top:7px}.control-row{display:flex;align-items:center;gap:12px;padding:22px 18px;border-bottom:1px solid var(--stroke)}.control-row b{font-size:13px}.control-row small{display:block;font-size:11px;color:var(--text-mid);margin-top:5px}.attention-dot{width:7px;height:7px;background:var(--cyan);border-radius:50%;flex-shrink:0}.amber{background:#e8bd7f}.green-dot{background:var(--green)}.control-action{margin-right:auto;font-size:11px;color:var(--text-mid)}.value-line{display:flex;align-items:center;justify-content:center;gap:30px;margin:35px 0 15px;color:var(--text-mid)}.value-line span{font-size:24px;color:var(--text)}.value-line b{color:var(--cyan)}.centered{text-align:center}.metric-list>div{display:grid;grid-template-columns:45px 110px 1fr;gap:20px;align-items:center;border-top:1px solid var(--stroke);padding:22px 0}.metric-list .number{margin:0}.metric-list h3{font-size:19px}.metric-list p{font-size:15px;color:var(--text-mid);line-height:1.6}.closing-actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}.closing{background:radial-gradient(ellipse at 10% 80%,#0e7c8c12,transparent 65%)}.bottom-nav{position:fixed;bottom:16px;left:25px;display:flex;align-items:center;gap:13px;z-index:60;background:#0a0e14ed;padding:6px 9px;border:1px solid var(--stroke);border-radius:8px;direction:ltr}.bottom-nav .counter{position:static;font-size:10px;color:var(--text-mid);min-width:57px;text-align:center}.bottom-nav button{font-size:15px;line-height:25px;width:27px;background:var(--card2);border:0;color:var(--text);border-radius:5px;cursor:pointer}.bottom-nav button:disabled{opacity:.3;cursor:default}.progress{position:fixed;height:2px;background:var(--cyan);bottom:0;right:0;z-index:90;width:6.25%;transition:width .25s}.rail{right:20px;gap:10px}.dot{width:6px;height:6px}.dot.active{height:18px}.slide:nth-child(even){background-color:#0c111955}
+@media(max-width:1000px){.slide{padding-inline:50px}.four{grid-template-columns:1fr 1fr}.cover-grid{gap:25px}.cover-visual{padding:15px}.split{gap:25px}.brand{font-size:9px}.card{padding:20px}.title{font-size:2.8rem}.orbit:before{width:210px;height:210px}.tag-one{top:20px}.tag-three{right:0}}
+@media(max-width:700px){.topbar{padding:0 18px;height:60px}.brand .dim{display:none}.brand{gap:7px;font-size:9px}.brand-mark{font-size:11px}.topbar button{font-size:11px;padding:6px 10px}.slide{padding:90px 27px 85px;min-height:100dvh}.title{font-size:2.25rem;line-height:1.15}.cover .title{font-size:2.6rem}.eyebrow{font-size:9px;letter-spacing:.13em;margin-bottom:16px}.cover-grid,.split,.system-grid{grid-template-columns:1fr}.cover-visual{min-height:310px;margin-top:5px}.orbit{height:215px}.orbit:before{width:200px;height:200px}.orbit:after{width:150px;height:150px}.orbit-core{width:95px;height:95px}.tag-one{right:15px;top:5px}.tag-two{left:10px;top:95px}.tag-three{right:25px;bottom:0}.cover-tags{justify-content:flex-end;margin:20px 0}.cover-footer{margin-top:25px}.rail{right:9px;gap:9px}.dot{width:5px;height:5px}.dot.active{height:13px}.card p{font-size:14px}.card h3{font-size:17px}.card{padding:18px}.number{margin-bottom:12px}.four{gap:10px}.four .card{padding:16px 13px}.four .card h3{font-size:16px}.four .card p{font-size:13px}.g-2,.g-3{grid-template-columns:1fr}.subtitle{font-size:16px}.margin{margin-top:24px}.text-list{margin-top:12px}.split{gap:25px}.module-strip{gap:7px}.module-strip span{font-size:12px;padding:7px 10px}.statement{font-size:19px;margin-top:25px;padding-top:20px}.journey{grid-template-columns:1fr;gap:20px}.journey article{padding-bottom:16px}.journey article>span{font-size:14px}.journey h3{font-size:17px}.metric-list>div{grid-template-columns:30px 1fr;gap:8px 16px;padding:17px 0}.metric-list p{grid-column:2;font-size:14px}.metric-list h3{font-size:18px}.value-line{gap:12px}.value-line span{font-size:18px}.value-line b{font-size:13px}.bottom-nav{bottom:12px;left:15px}.footnote{font-size:10px}blockquote{font-size:19px;padding:10px 16px}.chat-area{min-height:210px}.bubble{font-size:13px}.profile{padding:18px}.profile h3{font-size:15px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+@media print{@page{size:A4 landscape;margin:12mm}html,body{height:auto!important;overflow:visible!important;background:#0a0e14!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.deck{height:auto!important;overflow:visible!important;scroll-snap-type:none}.topbar,.rail,.bottom-nav,.progress,#contents,.closing-actions,.cover .primary{display:none!important}.slide{min-height:0!important;height:auto;break-after:page;padding:18px 10px!important;overflow:visible}.slide:last-child{break-after:auto}.slide-inner{max-width:none}.title,.cover .title{font-size:32px}.subtitle{font-size:14px}.card p,.text-list p,.journey p,.metric-list p{font-size:12px}.card h3,h3{font-size:16px}.margin{margin-top:22px}.cover-grid{grid-template-columns:1.3fr 1fr}.split{grid-template-columns:1fr 1fr}.g-3,.system-grid{grid-template-columns:repeat(3,1fr)}.g-2,.journey{grid-template-columns:1fr 1fr}.four{grid-template-columns:repeat(4,1fr)}.card{padding:18px}.cover-visual{min-height:300px}.orbit{height:220px}.footnote{font-size:9px}.text-list>div{padding:8px 0}.statement{margin-top:20px;padding-top:18px;font-size:18px}.mock-window{box-shadow:none}.metric-list>div{padding:18px 0}}
+
+</style>
+</head><body>
+<header class="topbar"><a href="#slide-1" class="brand" aria-label="חזרה לפתיחה"><span class="brand-mark">RE</span><span>REAL ESTATE <span class="dim">/ INTELLIGENCE</span></span></a><button id="menu-button" aria-expanded="false" aria-controls="contents">תוכן המצגת <span>☰</span></button></header>
+<nav id="contents" hidden aria-label="תוכן המצגת"></nav>
+<main class="deck" id="deck" tabindex="-1">
+<section class="slide cover" id="slide-1" data-title="החזון"><div class="slide-inner">
+<div class="eyebrow">CONFIDENTIAL · INVESTOR PRESENTATION</div>
+<div class="cover-grid"><div><div class="small-label"><span class="status-light"></span> מערכת נדל״ן חכמה · חזון מוצר</div>
+<h1 class="title">כל ליד הוא התחלה.<br><span class="cyan">הקשר לא נגמר<br>בפנייה הראשונה.</span></h1>
+<p class="subtitle">פלטפורמה אחת שמחברת בין לידים, לקוחות ופרויקטים — וממשיכה לחפש את ההתאמה הנכונה, גם אחרי שהשיחה הסתיימה.</p>
+<div class="cover-tags"><span>CRM</span><span>AI MATCHING</span><span>MULTILINGUAL</span></div>
+<button class="primary" data-go="1">להכיר את המערכת <span>↓</span></button></div>
+<div class="cover-visual" aria-label="המחשת החיבור בין פנייה, פרופיל לקוח ופרויקט"><div class="visual-header"><span class="mono cyan">CONNECTED OPPORTUNITIES</span><span class="badge">המחשה</span></div><div class="orbit"><div class="orbit-core"><span class="mono">RE</span><small>הלקוח במרכז</small></div><span class="orbit-tag tag-one">פנייה חדשה</span><span class="orbit-tag tag-two">פרויקט מתאים</span><span class="orbit-tag tag-three">שיחה מתמשכת</span></div><div class="visual-footer"><i></i> אותה היכרות. הזדמנויות חדשות.</div></div></div>
+<div class="footer-bar cover-footer"><span>חזון המערכת והצעת הערך למשקיעים</span><span class="mono cyan">FOCUSED ON DUBAI REAL ESTATE</span></div><p class="footnote">מצגת של מוצר מתוכנן. הדגמות המסכים והתרחישים להמחשה.</p>
+</div></section>
+<section class="slide" id="slide-2" data-title="הבעיה"><div class="slide-inner"><div class="eyebrow">01 / THE LEAD GAP</div><h2 class="title">הפרסום מביא פניות.<br><span class="cyan">מי דואג שהן יתקדמו?</span></h2><p class="subtitle narrow">תקציב השיווק כבר הושקע. אבל כשהתגובה מאחרת, המעקב נפסק או ההצעה לא רלוונטית — ההזדמנות עלולה להתפספס.</p>
+<div class="grid four margin"><article class="card"><span class="number">01</span><h3>אין מענה</h3><p>הפנייה מגיעה בין עשרות הודעות, ללא אחראי ברור וללא טיפול.</p></article><article class="card"><span class="number">02</span><h3>יש שיחה, אין המשך</h3><p>הלקוח מקבל תשובה ראשונה. משם, המעקב תלוי בזיכרון ובעומס של המתווך.</p></article><article class="card"><span class="number">03</span><h3>הצעה לא מתאימה</h3><p>הלקוח נחשף לפרויקט שהמתווך זוכר, ולא בהכרח לאפשרות שמתאימה לו.</p></article><article class="card"><span class="number">04</span><h3>התזמון עדיין לא נכון</h3><p>הלקוח לא קונה היום, ונשכח בדיוק כשהצרכים או ההיצע משתנים.</p></article></div><div class="statement">פנייה שלא הבשילה היום <strong class="cyan">יכולה להיות ההזדמנות של מחר.</strong></div><p class="footnote">את היקף האובדן נמדוד בפיילוט. ליד שלא טופל אינו בהכרח עסקה שאבדה.</p></div></section>
+<section class="slide" id="slide-3" data-title="הפתרון"><div class="slide-inner"><div class="eyebrow">02 / ONE CONNECTED SYSTEM</div><h2 class="title">מערכת אחת.<br><span class="cyan">רצף טיפול שלם.</span></h2><p class="subtitle narrow">מהרגע שאדם מתעניין ועד שמופיעה עבורו הזדמנות רלוונטית: כל המידע, השיחות והפעולות נשמרים בהקשר אחד.</p><div class="system-grid margin"><article class="card"><span class="number">INPUT</span><h3>כל הפניות</h3><p>איסוף לידים מערוצי השיווק ותיעוד המקור שלהם.</p></article><article class="card hot"><span class="number">INTELLIGENCE</span><h3>הבנת הלקוח</h3><p>פרופיל מתעדכן, התאמת פרויקטים ותקשורת בשפה המועדפת.</p></article><article class="card"><span class="number">ACTION</span><h3>המשך טיפול</h3><p>הצעות רלוונטיות, מעקב מתמשך והעברה למתווך עם כל ההקשר.</p></article></div><div class="module-strip"><span>מאגר פרויקטים</span><span>איסוף לידים</span><span>CRM</span><span>התאמה חכמה</span><span>מעקב אוטומטי</span><span>בקרה ומדידה</span></div></div></section>
+<section class="slide" id="slide-4" data-title="איסוף לידים"><div class="slide-inner"><div class="eyebrow">03 / LEAD CAPTURE</div><h2 class="title">סרטון אחד. הרבה פניות.<br><span class="cyan">מקום אחד לטפל בכולן.</span></h2><div class="split margin"><div><p class="subtitle">האיסוף המתוכנן ירכז פניות מוואטסאפ, אינסטגרם, פייסבוק, טיקטוק, גוגל וטפסים — בהתאם לחיבורים הזמינים בכל ערוץ.</p><div class="text-list"><div><b>קליטה ותיוג מקור</b><p>מתי הפנייה הגיעה, מאיזה ערוץ, ובמידת האפשר מאיזו מודעה או סרטון.</p></div><div><b>יצירה או עדכון של כרטיס</b><p>פנייה חדשה פותחת כרטיס. פנייה חוזרת מתחברת לכרטיס קיים כשיש זיהוי מהימן.</p></div><div><b>פשוט לצוות</b><p>קליטה אוטומטית או איסוף מרוכז בלחיצה, בלי להעתיק כל פנייה ידנית.</p></div></div></div><div class="mock-window"><div class="window-bar"><b>תיבת הפניות</b><span class="badge">המחשת ממשק</span></div><div class="channel-grid"><span>Instagram</span><span>WhatsApp</span><span>TikTok</span><span>Facebook</span><span>Google</span><span>Web forms</span></div><div class="lead-row"><div class="avatar">מ</div><div><b>מעוניינת בפרטים על הפרויקט</b><small>Instagram · תגובה לסרטון</small></div><span class="tag">חדש</span></div><div class="lead-row"><div class="avatar">ד</div><div><b>מה ההון העצמי הנדרש?</b><small>WhatsApp · הודעה נכנסת</small></div><span class="tag">חדש</span></div><div class="lead-row"><div class="avatar">א</div><div><b>מחפש דירה להשקעה בדובאי</b><small>Google · טופס ליד</small></div><span class="tag green-tag">נקלט</span></div><div class="mock-bottom">מקור הפנייה נשמר לאורך כל תהליך הטיפול</div></div></div><p class="footnote">צפייה או לייק אינם מספקים פרטי קשר. פרטים חסרים ייאספו בשיחה או בטופס, בהתאם להרשאות הערוץ.</p></div></section>
+<section class="slide" id="slide-5" data-title="כרטיס הלקוח"><div class="slide-inner"><div class="eyebrow">04 / CUSTOMER MEMORY</div><h2 class="title">הלקוח לא מתחיל<br><span class="cyan">מחדש בכל שיחה.</span></h2><div class="split margin"><div><p class="subtitle">כרטיס לקוח מרכזי מחבר בין מה שנאמר, מה שהוצע ומה שצריך לקרות בהמשך.</p><div class="text-list"><div><b>הצרכים והיכולת</b><p>תקציב, הון עצמי, יכולת תשלום, אזורים, סוג הנכס, מטרת הרכישה והתזמון הרצוי.</p></div><div><b>ההיסטוריה המלאה</b><p>שיחות, הצעות שנשלחו, תגובות, מסמכים, הערות ושינויים בהעדפות.</p></div><div><b>אחריות ברורה</b><p>מתווך אחראי, שלב בטיפול, משימה ותאריך הפעולה הבאה.</p></div></div></div><div class="mock-window"><div class="window-bar"><b>כרטיס לקוח</b><span class="badge">נתונים לדוגמה</span></div><div class="profile"><div class="avatar large">ד</div><div><h3>דניאל · משקיע פרטי</h3><span class="muted">מקור: Instagram · שפה: עברית</span></div></div><div class="profile-fields"><div><small>מטרת הרכישה</small><b>השקעה לטווח ארוך</b></div><div><small>אזור מועדף</small><b>דובאי</b></div><div><small>העדפה מרכזית</small><b>פריסת תשלומים ארוכה</b></div><div><small>מועד רכישה</small><b>בחודשים הקרובים</b></div></div><div class="timeline"><div><i></i><span>התעניין בפרויקט דרך סרטון</span></div><div><i></i><span>ציין שפריסת התשלום חשובה לו</span></div><div><i></i><span class="cyan">המשך: בירור יכולת התשלום התקופתית</span></div></div></div></div></div></section>
+<section class="slide" id="slide-6" data-title="מאגר מתעדכן למשרד"><div class="slide-inner"><div class="eyebrow">05 / A GROWING PROJECT DATABASE</div><h2 class="title">כל הפרויקטים של המשרד.<br><span class="cyan">מאגר שמתעדכן ומתפתח.</span></h2><p class="subtitle narrow">בצד המשרד יהיה מאגר מרכזי של כל הפרויקטים שהוא משווק. פרויקטים חדשים יתווספו אליו באופן שוטף, והתנאים של הפרויקטים הקיימים יעודכנו — כדי שהמערכת תשווה בין האפשרויות ותתאים אותן לכל לקוח.</p><div class="grid g-3 margin"><article class="card"><span class="number">UPDATE</span><h3>היצע שגדל לאורך הזמן</h3><p>הוספת פרויקטים ויחידות, תמונות ותוכניות; עדכון מחירים, זמינות, מועדי מסירה ותנאי תשלום, עם מקור מידע ותאריך עדכון.</p></article><article class="card hot"><span class="number">COMPARE</span><h3>השוואה בין התנאים</h3><p>בחינה של מחיר כולל, הון עצמי, מקדמה, סכומי התשלומים, משך הפריסה ותשלומים לאחר המסירה — לצד המיקום וסוג הנכס.</p></article><article class="card"><span class="number">MATCH</span><h3>התאמה לכל לקוח</h3><p>הצלבת תנאי הפרויקטים עם התקציב, יכולת התשלום והעדפות הלקוח, והצגת החלופות הרלוונטיות עם הסבר להתאמה.</p></article></div><div class="statement">כל פרויקט חדש במאגר <strong class="cyan">יכול להיות ההתאמה שחסרה ללקוח קיים.</strong></div><p class="footnote">המאגר מתוכנן להתעדכן דרך המשרד ומקורות מידע שיחוברו אליו. הכיסוי בפועל תלוי במקורות הזמינים ובאחריות לעדכון.</p></div></section>
+<section class="slide" id="slide-7" data-title="התאמה חכמה"><div class="slide-inner"><div class="eyebrow">06 / SMART MATCHING</div><h2 class="title">מהפרויקט שעליו שאל,<br><span class="cyan">לנכס שבאמת מתאים לו.</span></h2><div class="split margin"><div><p class="subtitle">מנוע ההתאמה המתוכנן ישווה בין התנאים של הפרויקטים במאגר מול דרישות הלקוח. הוא יציג אילו חלופות מתאימות, במה הן שונות ומה עדיין דורש בירור.</p><div class="text-list"><div><b>התאמה כלכלית</b><p>מחיר כולל, הון עצמי, יתרת תשלומים, מועדים ועלויות נלוות רלוונטיות.</p></div><div><b>התאמה לצורך</b><p>מיקום, סוג הנכס, מועד מסירה, מטרת הרכישה והעדפות שהלקוח ציין.</p></div><div><b>השלמת מידע חסר</b><p>שאלות ממוקדות לפני קביעה שהפרויקט מתאים. הבחנה בין מידע שאושר להערכה.</p></div></div></div><div class="mock-window match-demo"><div class="window-bar"><b>תוצאת התאמה</b><span class="badge">תרחיש לדוגמה</span></div><div class="project-art"><span class="mono">DUBAI / PROJECT A</span><div class="buildings"><i></i><i></i><i></i><i></i></div></div><h3>פרויקט א׳ · חלופה לבדיקה</h3><div class="match-line"><span>✓</span> האזור תואם להעדפת הלקוח</div><div class="match-line"><span>✓</span> קיימת פריסה ארוכה יותר</div><div class="match-line pending"><span>?</span> נדרש לאמת יכולת תשלום לאורך התקופה</div><p class="mock-bottom">ההתאמה מוסברת. ההחלטה נשארת אצל הלקוח והמתווך.</p></div></div></div></section>
+<section class="slide" id="slide-8" data-title="התאמה מחדש"><div class="slide-inner"><div class="eyebrow">07 / CONTINUOUS MATCHING</div><h2 class="title">הפרויקט השתנה.<br><span class="cyan">ההזדמנות נפתחת מחדש.</span></h2><p class="subtitle narrow">בכל הוספת פרויקט או עדכון תנאים במאגר, המערכת תבדוק מחדש התאמות ללקוחות קיימים. כך ההיצע המתחדש של המשרד יוכל להפוך להזדמנויות חדשות מול אנשים שכבר פנו אליו.</p><div class="grid g-3 margin"><article class="card"><span class="number">TRIGGER</span><h3>משהו השתנה</h3><p>נוסף פרויקט, התעדכנה זמינות, השתנה מחיר או תנאי תשלום — או שהלקוח עדכן תקציב והעדפות.</p></article><article class="card hot"><span class="number">MATCH</span><h3>המערכת מזהה קשר</h3><p>השוואת התנאים החדשים מול צורכי הלקוחות, החלופות שכבר נשלחו והפערים שמנעו התקדמות בעבר.</p></article><article class="card"><span class="number">RECONNECT</span><h3>יש סיבה לחזור לשיחה</h3><p>הצעה חדשה ומוסברת, בשפה המתאימה ובכפוף להעדפות התקשורת.</p></article></div><blockquote>״בפעם הקודמת הפריסה לא התאימה. עכשיו נוספה אפשרות שעשויה לענות על מה שחיפשת.״<small>נוסח לדוגמה להמחשת חידוש קשר רלוונטי</small></blockquote></div></section>
+<section class="slide" id="slide-9" data-title="תקשורת רב־לשונית"><div class="slide-inner"><div class="eyebrow">08 / SPEAK THEIR LANGUAGE</div><h2 class="title">אותה מערכת.<br><span class="cyan">השפה של כל לקוח.</span></h2><div class="split margin"><div><p class="subtitle">הלקוח פונה בערבית, רוסית, טורקית או עברית? ברירת המחדל המתוכננת היא להשיב בשפת הפנייה.</p><div class="text-list"><div><b>בחירה מפורשת קודמת לזיהוי</b><p>אם הלקוח בוחר שפה אחרת, הבחירה נשמרת בכרטיס ומלווה את השיחות הבאות.</p></div><div><b>רציפות גם בהצעות</b><p>הודעות מעקב, הסברים על פרויקטים ועדכונים יותאמו לשפה המועדפת.</p></div><div><b>דיוק בפרטים</b><p>מחירים, מטבעות, תאריכים ותנאי תשלום צריכים להישמר במדויק בכל תרגום.</p></div></div></div><div class="mock-window"><div class="window-bar"><b>מענה מותאם לשפה</b><span class="badge">הדגמה</span></div><div class="language-tabs" role="group" aria-label="בחר שפת הדגמה"><button data-lang="he" aria-pressed="true">עברית</button><button data-lang="ar" aria-pressed="false">العربية</button><button data-lang="ru" aria-pressed="false">Русский</button><button data-lang="tr" aria-pressed="false">Türkçe</button></div><div class="chat-area" aria-live="polite"><div class="bubble incoming" id="customer-message"></div><div class="bubble outgoing" id="system-message"></div></div><div class="mock-bottom">בחירה ידנית נשמרת כהעדפת הלקוח</div></div></div><p class="footnote">השפות ואיכות המענה ייבדקו במסגרת הפיתוח. ההודעות כאן כתובות מראש לצורך ההדגמה.</p></div></section>
+<section class="slide" id="slide-10" data-title="מעקב והעברה למתווך"><div class="slide-inner"><div class="eyebrow">09 / AUTOMATION + HUMAN CONTEXT</div><h2 class="title">שומרים על הקשר.<br><span class="cyan">המתווך מוביל את העסקה.</span></h2><div class="grid g-2 margin"><article class="card hot"><span class="number">ALWAYS IN CONTEXT</span><h3>מעקב אוטומטי ורלוונטי</h3><p>הצעות חדשות, עדכונים ובירור אם הצרכים השתנו — לאורך זמן, גם כשאין רכישה מיידית.</p><ul><li>תדירות לפי הסכמה והעדפות הלקוח</li><li>מניעת שליחה חוזרת של אותה הצעה ללא סיבה</li><li>אפשרות להשהות או להפסיק הודעות</li></ul></article><article class="card"><span class="number">HUMAN HANDOFF</span><h3>העברה למתווך בזמן הנכון</h3><p>כאשר עולה עניין, בקשה לפגישה או שאלה מקצועית, המתווך מקבל את ההיסטוריה ואת הצעד הבא.</p><ul><li>מה הלקוח מחפש ומה כבר הוצע לו</li><li>מה מעכב התקדמות ומה דורש תשובה</li><li>עצירת המענה האוטומטי בזמן טיפול אישי</li></ul></article></div><div class="statement">פחות שחזור מידע. <strong class="cyan">יותר זמן לשיחה שמקדמת החלטה.</strong></div></div></section>
+<section class="slide" id="slide-11" data-title="מסע לקוח לדוגמה"><div class="slide-inner"><div class="eyebrow">10 / THE CUSTOMER JOURNEY</div><h2 class="title">כך זה מתחבר<br><span class="cyan">לסיפור לקוח אחד.</span></h2><p class="subtitle">תרחיש המחשה: מתעניין מגיע מסרטון על רכישת דירה בדובאי.</p><div class="journey margin"><article><span>01</span><div><h3>פנייה מהסרטון</h3><p>ההודעה נקלטת, מקור הפנייה נשמר ונפתח כרטיס לקוח.</p></div></article><article><span>02</span><div><h3>הבנת הצורך</h3><p>מענה בשפתו ובירור ההון העצמי, יכולת התשלום, האזור והמטרה.</p></div></article><article><span>03</span><div><h3>הצעה ראשונה</h3><p>פרויקטים מתאימים מוצגים עם הסבר. הלקוח מציין שהפריסה קצרה מדי.</p></div></article><article><span>04</span><div><h3>שינוי בהיצע</h3><p>נוסף פרויקט עם פריסה אחרת. המערכת בודקת אותו מול הדרישה שנשמרה.</p></div></article><article><span>05</span><div><h3>חידוש קשר</h3><p>הלקוח מקבל הצעה רלוונטית ומביע עניין בשיחה נוספת.</p></div></article><article><span>06</span><div><h3>המתווך ממשיך</h3><p>כל ההקשר עובר למתווך לצורך פגישה, בירור מקצועי והתקדמות לעסקה.</p></div></article></div></div></section>
+<section class="slide" id="slide-12" data-title="שליטה ובקרה"><div class="slide-inner"><div class="eyebrow">11 / MANAGEMENT VISIBILITY</div><h2 class="title">לראות איפה<br><span class="cyan">הטיפול נעצר.</span></h2><div class="split margin"><div><p class="subtitle">למנהלי המשרד תהיה תמונה של עומס הפניות, האחריות והשלבים שבהם נדרש להחזיר את התהליך למסלול.</p><div class="text-list"><div><b>פניות ללא מענה</b><p>איתור פניות שלא קיבלו תגובה או שיחה מהותית.</p></div><div><b>לקוחות ללא המשך טיפול</b><p>זיהוי כרטיסים ללא אחראי, ללא משימה או עם מעקב שלא בוצע.</p></div><div><b>מקור הפנייה והתוצאה</b><p>חיבור בין קמפיין, טיפול, פגישה והתקדמות — כשיש נתוני שיוך אמינים.</p></div></div></div><div class="mock-window"><div class="window-bar"><b>מרכז הבקרה</b><span class="badge">המחשת מבנה</span></div><div class="control-row"><span class="attention-dot"></span><div><b>ממתינים למענה ראשון</b><small>תיעדוף פניות חדשות</small></div><span class="control-action">לטיפול</span></div><div class="control-row"><span class="attention-dot amber"></span><div><b>ללא מתווך אחראי</b><small>שיוך אחריות ברורה</small></div><span class="control-action">לשיוך</span></div><div class="control-row"><span class="attention-dot amber"></span><div><b>מועד המעקב חלף</b><small>חידוש תהליך הטיפול</small></div><span class="control-action">למעקב</span></div><div class="control-row"><span class="attention-dot green-dot"></span><div><b>הביעו עניין בהצעה</b><small>הזדמנות לשיחה אישית</small></div><span class="control-action">להמשך</span></div><div class="mock-bottom">כל פנייה עם הקשר. כל פעולה עם אחראי.</div></div></div></div></section>
+<section class="slide" id="slide-13" data-title="הערך העסקי"><div class="slide-inner"><div class="eyebrow">12 / BUSINESS VALUE</div><h2 class="title">להפיק יותר<br><span class="cyan">מהפניות שכבר הגיעו.</span></h2><div class="grid g-3 margin"><article class="card"><span class="number">MARKETING</span><h3>למנהל השיווק</h3><p>להבין מה קורה לאחר יצירת הליד, ולצמצם פער בין השקעה בפרסום לטיפול בפניות.</p></article><article class="card hot"><span class="number">BROKER</span><h3>למתווך</h3><p>להגיע לשיחה עם היכרות, פרויקטים רלוונטיים והיסטוריית טיפול — בפחות עבודה ידנית.</p></article><article class="card"><span class="number">CUSTOMER</span><h3>ללקוח</h3><p>לקבל מענה בשפה שלו, הצעות לפי הצרכים שלו והמשכיות בלי להסביר הכול מחדש.</p></article></div><div class="value-line"><span>איסוף</span><b>+</b><span>הבנה</span><b>+</b><span>התאמה</span><b>+</b><span>רציפות</span></div><p class="subtitle centered">הצעת הערך היא החיבור בין מאגר הנכסים להיסטוריית הלקוח — לאורך זמן.</p></div></section>
+<section class="slide" id="slide-14" data-title="מדידת ההצלחה"><div class="slide-inner"><div class="eyebrow">13 / PROVING THE VALUE</div><h2 class="title">את הערך העסקי<br><span class="cyan">נוכיח במדידה.</span></h2><p class="subtitle narrow">פיילוט יתחיל במדידת המצב הקיים, ויבחן האם התהליך החדש משפר את הטיפול ואת ההתקדמות של הלקוחות.</p><div class="metric-list margin"><div><span class="number">01</span><h3>מענה</h3><p>זמן לתגובה ראשונה ולמענה מהותי; שיעור הפניות ללא תשובה.</p></div><div><span class="number">02</span><h3>רציפות</h3><p>שיעור לקוחות עם אחראי ופעולת המשך; השלמת מעקבים במועד.</p></div><div><span class="number">03</span><h3>עניין</h3><p>תגובות להצעות, חידוש שיחות ופגישות שנקבעו בעקבות המעקב.</p></div><div><span class="number">04</span><h3>התקדמות</h3><p>מעבר בין שלבי הטיפול ועסקאות שהתקדמו, תוך בדיקת איכות הנתונים.</p></div></div><p class="footnote">אין כאן שיעורי המרה או תשואה שהוכחו. השוואה תתחשב במקור הלידים, בתקופה ובאיכות הפניות.</p></div></section>
+<section class="slide" id="slide-15" data-title="הפוקוס: דובאי"><div class="slide-inner"><div class="eyebrow">14 / FOCUSED ON DUBAI</div><h2 class="title">הפוקוס הוא דובאי.<br><span class="cyan">מערכת לשוק הנדל״ן שלה.</span></h2><p class="subtitle narrow">המערכת מיועדת למשרדי תיווך המשווקים פרויקטים בדובאי. מאגר הפרויקטים, השוואת תנאי הרכישה וההתאמה ללקוחות יתמקדו בדובאי — עם מענה למתעניינים ממדינות ובשפות שונות.</p><div class="grid g-3 margin"><article class="card hot"><span class="number">PHASE 01</span><h3>תהליך ראשון מקצה לקצה</h3><p>ערוץ פניות ראשון, כרטיס לקוח, מאגר פרויקטים, התאמה והעברה למתווך.</p></article><article class="card"><span class="number">PHASE 02</span><h3>פיילוט ולמידה</h3><p>בחינת איכות המענה וההתאמה, מעקב מתמשך ומדידת השיפור מול המצב הקיים.</p></article><article class="card"><span class="number">PHASE 03</span><h3>העמקת הפעילות בדובאי</h3><p>הרחבת מאגר הפרויקטים בדובאי, הוספת מקורות מידע, ערוצים ושפות, ושיפור ההתאמה לצורכי המשרדים והלקוחות.</p></article></div><p class="footnote">סדר העבודה מוצע לצורך הדיון. היקף הפיתוח ולוחות הזמנים יוגדרו לאחר אפיון ואימות החיבורים.</p></div></section>
+<section class="slide closing" id="slide-16" data-title="הצעד הבא"><div class="slide-inner"><div class="eyebrow">15 / THE NEXT CONVERSATION</div><h2 class="title">לבנות מערכת<br><span class="cyan">שזוכרת את ההזדמנות.</span></h2><p class="subtitle narrow">החזון: כל פנייה מקבלת הקשר, כל לקוח נשאר בתמונה, וכל פרויקט חדש יכול לפתוח שיחה חדשה.</p><div class="grid g-2 margin"><article class="card"><h3>מה נרצה להוכיח בפיילוט</h3><p>קליטה אמינה, מענה איכותי, התאמה שימושית ורציפות טיפול שהצוות והלקוחות מרגישים בפועל.</p></article><article class="card"><h3>מה נגדיר עם השותפים</h3><p>משרד לפיילוט, מקורות מידע לפרויקטים, היקף הגרסה הראשונה, מדדי הצלחה ואחריות לביצוע.</p></article></div><div class="statement">הפרסום יוצר את הפנייה.<br><strong class="cyan">המערכת נועדה לשמור על האפשרות שתהפוך לעסקה.</strong></div><div class="closing-actions"><button class="primary" data-go="0">חזרה לפתיחה ↑</button><button class="secondary" id="print-button">הדפסה / שמירה כ־PDF</button></div><p class="footnote">מצגת מוצר לדיון עם משקיעים. סכום גיוס, תמחור, מודל הכנסות ותנאי השקעה טרם נקבעו.</p></div></section>
+</main><nav class="rail" id="rail" aria-label="ניווט שקופיות"></nav><div class="bottom-nav"><button id="previous" aria-label="שקופית קודמת">↑</button><span class="counter" id="counter" aria-live="polite">01 / 16</span><button id="next" aria-label="שקופית הבאה">↓</button></div><div class="progress" id="progress"></div><script>
+const slides=[...document.querySelectorAll('.slide')];
+const deck=document.getElementById('deck'),rail=document.getElementById('rail'),contents=document.getElementById('contents'),menu=document.getElementById('menu-button');
+let active=0;
+const motion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
+function go(i){i=Math.max(0,Math.min(slides.length-1,i));slides[i].scrollIntoView({behavior:motion(),block:'start'});contents.hidden=true;menu.setAttribute('aria-expanded','false')}
+slides.forEach((slide,i)=>{const dot=document.createElement('button');dot.className='dot';dot.setAttribute('aria-label',`${i+1}. ${slide.dataset.title}`);dot.title=slide.dataset.title;dot.addEventListener('click',()=>go(i));rail.append(dot);const item=document.createElement('button');item.innerHTML=`<span>${String(i+1).padStart(2,'0')}</span>${slide.dataset.title}`;item.addEventListener('click',()=>go(i));contents.append(item)});
+function update(){const center=deck.scrollTop+Math.min(deck.clientHeight*.35,260);let current=0;slides.forEach((s,i)=>{if(s.offsetTop<=center)current=i});active=current;rail.querySelectorAll('button').forEach((b,i)=>{b.classList.toggle('active',i===active);if(i===active)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current')});document.getElementById('counter').textContent=`${String(active+1).padStart(2,'0')} / ${slides.length}`;document.getElementById('progress').style.width=`${(active+1)/slides.length*100}%`;document.getElementById('previous').disabled=active===0;document.getElementById('next').disabled=active===slides.length-1}
+let frame=false;deck.addEventListener('scroll',()=>{if(!frame){requestAnimationFrame(()=>{update();frame=false});frame=true}},{passive:true});window.addEventListener('resize',update);
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(Number(b.dataset.go))));document.getElementById('previous').addEventListener('click',()=>go(active-1));document.getElementById('next').addEventListener('click',()=>go(active+1));
+menu.addEventListener('click',()=>{contents.hidden=!contents.hidden;menu.setAttribute('aria-expanded',String(!contents.hidden));if(!contents.hidden)contents.querySelector('button').focus()});document.addEventListener('click',e=>{if(!contents.hidden&&!contents.contains(e.target)&&!menu.contains(e.target)){contents.hidden=true;menu.setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){contents.hidden=true;menu.setAttribute('aria-expanded','false');menu.focus();return}if(e.target.closest('button,a,input,select,textarea')||!contents.hidden)return;if(['PageDown','ArrowDown',' '].includes(e.key)){e.preventDefault();go(active+1)}else if(['PageUp','ArrowUp'].includes(e.key)){e.preventDefault();go(active-1)}else if(e.key==='Home'){e.preventDefault();go(0)}else if(e.key==='End'){e.preventDefault();go(slides.length-1)}});
+const messages={he:['אני מחפש דירה להשקעה בדובאי. אפשר לקבל פרטים?','בשמחה. מה התקציב הכולל שלך, ואיזו פריסת תשלומים מתאימה לך?'],ar:['أبحث عن شقة للاستثمار في دبي. هل يمكنني الحصول على التفاصيل؟','بكل سرور. ما ميزانيتك الإجمالية، وما خطة الدفع المناسبة لك؟'],ru:['Я ищу квартиру для инвестиций в Дубае. Можно узнать подробности?','Конечно. Каков ваш общий бюджет и какой график платежей вам подходит?'],tr:["Dubai’de yatırım amaçlı bir daire arıyorum. Bilgi alabilir miyim?",'Elbette. Toplam bütçeniz nedir ve size nasıl bir ödeme planı uygundur?']};
+function language(lang){document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===lang)));['customer-message','system-message'].forEach((id,i)=>{const el=document.getElementById(id);el.textContent=messages[lang][i];el.lang=lang;el.dir=['he','ar'].includes(lang)?'rtl':'ltr'})}document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>language(b.dataset.lang)));document.getElementById('print-button').addEventListener('click',()=>window.print());language('he');update();
+
+</script></body></html>
